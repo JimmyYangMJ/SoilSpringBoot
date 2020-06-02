@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soil.dao.SoilNodeMapper">
+
+    <resultMap id="BaseResultMap" type="com.soil.pojo.SoilNode" >
+        <constructor >
+            <idArg column="node" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="interval_s" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="location" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="last_update" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List" >
+    node, state, interval_s, location, last_update
+  	</sql>
+
+
+<!--    <select id="selectSoilNodeSet" resultMap="BaseResultMap">-->
+<!--        select <include refid="Base_Column_List" />-->
+<!--        from soil_node-->
+<!--    </select>-->
+    <select id="selectSoilNodeSet" resultType="com.soil.pojo.SoilNode">
+        select *
+        from soil_node
+    </select>
+
+    <insert id="insertSoilNode" parameterType="com.soil.pojo.SoilNode" >
+    INSERT INTO
+        soil_node(node, state, interval_s, lng, lat, last_update)
+    VALUE
+	    (#{node}, #{state}, #{interval_s},#{lng}, #{lat}, NOW());
+    </insert>
+
+    <update id="updateSoilNodeLocation" parameterType="map" >
+        update soil_node
+        <if test="lng != null" >
+            SET lng = #{lng}, lat = #{lat}
+        </if>
+        <if test="lng == null" >
+            SET lng = null, lat = null
+        </if>
+        where node = #{node};
+    </update>
+
+    <delete id="deleteSoilNode" parameterType="java.lang.Integer" >
+        DELETE FROM
+            soil_node
+        where node = #{node};
+    </delete>
+
+    <select id="selectSoilNodeLocationSet" resultType="com.soil.pojo.SoilNodeLocation">
+        SELECT node, lng, lat
+        FROM soil_node;
+    </select>
+
+
+
+
+</mapper>

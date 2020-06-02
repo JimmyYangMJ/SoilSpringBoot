@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soil.dao.SoilMapper">
+
+    <resultMap id="BaseResultMap" type="com.soil.pojo.SoilWater" >
+        <constructor >
+            <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="node" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="humidity" jdbcType="DOUBLE" javaType="java.lang.Double" />
+            <arg column="times" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List" >
+    id, node, humidity, times
+  	</sql>
+
+    <select id="selectSoilSet" resultType="com.soil.pojo.SoilWater" parameterType="map">
+        select *
+        from soil_water
+        where node = #{node}
+        and times like #{times}
+    </select>
+<!--    and times like #{time}-->
+
+    <select id="selectSoilTimeRegionSet" resultType="com.soil.pojo.SoilWater" parameterType="map">
+        SELECT
+	        node, humidity, times
+        FROM
+	        soil_water
+        WHERE
+	        times BETWEEN #{startTimes} AND #{endTimes}
+        order by 3 ASC;
+    </select>
+
+    <select id="selectSoilWhichTime" resultType="com.soil.pojo.SoilTimeList" >
+        SELECT distinct  DATE_FORMAT(times,"%Y-%m-%d") 'timeList' , node
+        from soil_water
+        order by 1 desc;
+    </select>
+
+
+</mapper>
