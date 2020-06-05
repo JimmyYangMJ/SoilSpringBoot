@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soil.dao.SoilClientsMapper">
+
+
+
+    <select id="selectSoilClients" resultType="com.soil.pojo.SoilClients" >
+        select client_id, client_status, ip, last_update
+        from soil_clients_um
+
+    </select>
+
+
+
+</mapper>
