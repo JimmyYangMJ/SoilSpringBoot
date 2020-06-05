@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 
 /**
- * Created by geely
- * @author dell
+ * status 状态码 （0：正常）
+ * msg 提示信息 （查询成功）
+ * data<T> 数据
  */
 @JsonSerialize(include =  JsonSerialize.Inclusion.NON_NULL)
 //保证序列化json的时候,如果是null的对象,key也会消失

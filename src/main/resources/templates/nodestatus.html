@@ -147,6 +147,7 @@
                             </tr>
                         </thead>
 
+
                         <!--显示数据内容的格式部分-->
                         <tbody id="nodestatus">
                             <tr>
@@ -203,21 +204,25 @@
                 <h3 class="sub_header">结点位置显示</h3>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <div id="nodemap" class="mapbox"></div>
+                        <div id="allmap" class="mapbox">结点地图显示66</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- ECharts单文件引入 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+
+    <!-- 百度地图 API -->
+    <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=jQzzGoociMMSVKUPvpII4IBUBQMHve1l"></script>
 
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/flexible.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/echarts.min.js"></script>
     <script src="/static/js/chart.js"></script>
-    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=glhaW5DqSZ1kC232KkelBwPoOYbkIjDZ">
-    </script>
     <script src="/static/js/map.js"></script>
 </body>
 

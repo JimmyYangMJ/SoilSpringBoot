@@ -13,7 +13,12 @@ public class SoilNode {
 
     /** 结点编号*/
     private int node;
-    /** 结点状态 */
+    /** 结点状态
+     * 异常：00
+     * 正常运行 01
+     * 电力不足 02
+     * 休眠状态 03
+     * */
     private String state;
     /** 监测频率， 单位秒*/
     private int interval_s;

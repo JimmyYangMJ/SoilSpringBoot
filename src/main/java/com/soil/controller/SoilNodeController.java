@@ -17,6 +17,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 下位机节点信息
+ * 1. 查询结点位置信息 GET
+ * 2. 更新结点位置信息 PUT
+ * 3. 查询结点所有信息 GET
+ * 4. 增加结点 POST
+ * 5. 删除结点 DELETE
  * @author ymj
  * @Date： 2019/11/13 20:35
  */
@@ -27,27 +33,10 @@ public class SoilNodeController {
     @Autowired
     private SoilNodeServiceImpl soilNodeService;
 
-    /**
-     * 向下位机发送消息
-     * 接口
-     * @param session 会话
-     * @return json序列
-     */
-    @RequestMapping(value = "sendmessage.do", method = RequestMethod.GET)
-    @ResponseBody // 使得序列化为json
-    public ServerResponse<String> sendmassage(int id, String message, HttpSession session){
-
-        System.out.println("客户机 " + id + " 发送: " + message);
-
-        NioServerWrite.setSendId(id);
-        NioServerWrite.setSendMessage(message);
-        // todo 发送状态
-        return ServerResponse.createBySuccessMessage("发送成功");
-    }
 
     /**
-     * 1.查询所有结点信息
-     * 接口
+     * 1.查询所有节点信息 接口
+     * data 包括：node state，interval_s，lng，lat，last_update
      * @param session 会话
      * @return json序列
      */
@@ -57,7 +46,7 @@ public class SoilNodeController {
 
         ServerResponse<List<SoilNode>> response = soilNodeService.selectSoilNodeSet();
 
-        System.out.println(response);
+//        System.out.println(response);
 //        if(response.isSuccess()){
 //            session.setAttribute(Const.CURRENT_USER,response.getData());
 //        }
@@ -124,7 +113,7 @@ public class SoilNodeController {
 
 
     /**
-     * 1.查询所有结点 位置
+     * 查询所有结点 位置
      * 接口
      * @param session 会话
      * @return json序列
@@ -134,7 +123,6 @@ public class SoilNodeController {
     public ServerResponse<List<SoilNodeLocation>> selectSoilNodeLocation(HttpSession session){
 
         // todo 管理员验证
-
         ServerResponse<List<SoilNodeLocation>> response = soilNodeService.selectSoilNodeLocationSet();
 
         System.out.println(response);

@@ -10,7 +10,7 @@ public class MyControllerTest {
     @RequestMapping("/out")
     @ResponseBody
     public String out(){
-        String a = "666";
+        String a = "测试用";
         return "success";
     }
 }

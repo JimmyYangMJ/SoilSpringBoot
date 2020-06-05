@@ -47,7 +47,7 @@ public class SoilWater {
         return humidity;
     }
 
-    @JsonFormat(pattern = "yyyy-MM-dd- HH:mm:ss", timezone = "GMT")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT")
     public Date getTimes() {
         return times;
     }

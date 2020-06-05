@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * 水势数据查询
+ * 1. 查询某天某结点水势 GET
+ * 2. 查询某时间段的水势 GET
+ * 3. 查询有数据的时间和对应结点 GET
+ */
 @Controller("SoilController")
 @RequestMapping("/soil")
 public class SoilController {
@@ -72,7 +78,6 @@ public class SoilController {
 
     /**
      * 3.查询有数据的是哪几天
-     * 接口
      * @param session
      * @return
      */
@@ -89,11 +94,9 @@ public class SoilController {
         return response;
     }
 
-
-
-    @RequestMapping("test.do")
-    public String echartsJSP(){
-        System.out.println("调用了echartsJSP界面");
-        return "test";
-    }
+//    @RequestMapping("test.do")
+//    public String echartsJSP(){
+//        System.out.println("调用了echartsJSP界面");
+//        return "test";
+//    }
 }
