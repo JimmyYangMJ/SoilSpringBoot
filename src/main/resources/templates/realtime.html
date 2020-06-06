@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/navs.less">
+
+    <!-- ECharts单文件引入 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 </head>
 
 <body>
@@ -127,9 +131,19 @@
                 <!-- 实时数据折线表 -->
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <div id="realtimechart" class="chartbox"></div>
+<!--                        <div id="realtimechart" class="chartbox"></div>-->
+                        <div id="container" class="ct-chart" style="height: 500px">当前没有数据</div>
+
                     </div>
                 </div>
+                <form onSubmit="return false;">
+                    <input type = "text" name = "message" value = ""/>
+                    <br/><br/>
+                    <input type = "button" value = "发送WebSocket请求消息" onClick = "send(this.form.message.value)"/>
+                    <hr color="red"/>
+                    <h2>客户端接收到服务端返回的应答消息</h2>
+                    <textarea id = "responseContent" style = "width:1024px; height:300px"></textarea>
+                </form>
 
             </div>
 
@@ -139,9 +153,11 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/flexible.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/echarts.min.js"></script>
+<!--    <script src="/static/js/echarts.min.js"></script>-->
     <script src="/static/js/chart.js"></script>
     <script src="/static/js/realtime.js"></script>
+
+    <script src="/static/js/echartsDynamic.js"></script>
 
 </body>
 

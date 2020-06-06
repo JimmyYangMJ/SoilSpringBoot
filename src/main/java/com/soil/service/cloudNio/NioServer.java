@@ -1,6 +1,8 @@
 package com.soil.service.cloudNio;
 
 
+import com.soil.service.WebSocket;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -198,6 +200,8 @@ public class NioServer implements Runnable{
 			 * <[参数个数],[参数类型],[id],[AD],[AD_base],[水势值],[时间],>
 			 *  <6,1,1,1.2,1.5,6.4,2020-06-06 12:12:13,>
 			 */
+			WebSocket.sendMessage(message);
+
 			System.out.println(message);
 			return 3;
 		}

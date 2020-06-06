@@ -38,7 +38,6 @@ public class ClientsUMController {
 
         ServerResponse<List<SoilClients>> response = iSoilClientsService.selectSoilClients();
 
-        WebSocket.sendMessage("查了一下子");
         System.out.println(response);
 //        if(response.isSuccess()){
 //            session.setAttribute(Const.CURRENT_USER,response.getData());
