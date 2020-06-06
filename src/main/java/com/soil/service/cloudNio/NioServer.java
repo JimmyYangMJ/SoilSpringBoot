@@ -18,24 +18,22 @@ public class NioServer implements Runnable{
 
 	private static final int PORT = 8001;
 
-
 	/**
-	 * 开启 <br>
-	 * 1. 心跳包Thread <br>
-	 * 2. 发送消息（向客户端）Thread
+	 * 通道初始化
+	 * @param selector 多路选择器
+	 * @param serverSocketChannel 监听套接字通道
 	 */
-    private static void startThread(){
-		/** 向客户端发送心跳包-线程*/
-		NioServerTick nioServerTick = new NioServerTick();
-		Thread tick = new Thread(nioServerTick);
-		tick.setDaemon(true);
-		tick.start();
-
-		/** 向指定客户端发送信息-线程*/
-		NioServerWrite nioServerWrite = new NioServerWrite();
-		Thread write = new Thread(nioServerWrite);
-		write.setDaemon(true);
-		write.start();
+	private static void socketChannelInitial(Selector selector, ServerSocketChannel serverSocketChannel) {
+		try {
+			serverSocketChannel.configureBlocking(false); // 开启非阻塞模式
+			serverSocketChannel.socket().bind(new InetSocketAddress(PORT), 1024); // 驻守在 port端口
+			System.out.println("===accept 接受===");
+			serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); // 绑定多路选择器+通道
+			System.out.printf("===服务器在%d端口守候===\n", PORT);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	/**
@@ -55,9 +53,12 @@ public class NioServer implements Runnable{
 			e.printStackTrace();
 		}
 
+		/** 通道初始化 */
 		socketChannelInitial(selector, serverSocketChannel);
 
-		/** 开启线程 */
+		/** 开启线程
+		 * 1. 心跳包-线程
+		 * 2. 发送信息-线程*/
 		startThread();
 
 		while(true) {
@@ -85,29 +86,7 @@ public class NioServer implements Runnable{
 				ex.printStackTrace();
 			}
 
-			try {
-				// Thread.sleep(500);
-			} catch(Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
 
-	/**
-	 * 通道初始化
-	 * @param selector 多路选择器
-	 * @param serverSocketChannel 监听套接字通道
-	 */
-	private static void socketChannelInitial(Selector selector, ServerSocketChannel serverSocketChannel) {
-		try {
-			serverSocketChannel.configureBlocking(false); // 开启非阻塞模式
-			serverSocketChannel.socket().bind(new InetSocketAddress(PORT), 1024); // 驻守在 port端口
-			System.out.println("===accept 接受===");
-			serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); // 绑定多路选择器+通道
-			System.out.printf("===服务器在%d端口守候===\n", PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
@@ -127,7 +106,7 @@ public class NioServer implements Runnable{
 				SocketChannel socketChannel = ssc.accept();
 				socketChannel.configureBlocking(false);
 				// Add the new connection to the selector
-				System.out.println("reda 读取");
+				System.out.println("读取");
 				socketChannel.register(selector, SelectionKey.OP_READ);
 				System.out.println("==有一个新的连接==" + selectionKey.channel());
 			}
@@ -143,31 +122,29 @@ public class NioServer implements Runnable{
 					byte[] bytes = new byte[readBuffer.remaining()];
 					readBuffer.get(bytes);
 					/** request 接受到的消息 */
-					String request = new String(bytes, "UTF-8"); //接收到的输入
+					String requestMessage = new String(bytes, "UTF-8"); //接收到的输入
 
-					//System.out.printf("client %s \nsaid: %s\n" , selectionKey.channel(), request);
 
-					/**  格式：[id]：[message] */
-					String[] requests = request.split(":",2);
-					int id = Integer.parseInt(requests[0]);
-					String message = requests[1].trim().toString();
-					//System.out.printf("client (id = %d)said: %s\n" , id, requests[1]);
+					/** 消息处理 */
+					int status = messageHandel(requestMessage);
+
+					/**  格式：[client_id]：[message]
+					 * <[参数个数],[参数类型],[发送端],···,[参数n]> */
+					/** 发送端 */
+					int client_id = Integer.parseInt(requestMessage.split(",")[2]);
 
 					/** 记录客户的连接通道 */
 					if(ClientMap.containsValue(selectionKey) == false) { //新的通道连接
-						if (ClientMap.containsKey(id)) { // 之前注册过
-							System.out.printf("客户 %d 重新连接\n", id);
+						if (ClientMap.containsKey(client_id)) { // 之前注册过
+							System.out.printf("客户 %d 重新连接\n", client_id);
 						}else {
-							System.out.printf("客户 %d 初次登陆\n", id);
+							System.out.printf("客户 %d 初次登陆\n", client_id);
 						}
-						ClientMap.put(id, selectionKey);
+						ClientMap.put(client_id, selectionKey);
 					}
 
-					/** 消息处理 */
-					messageHandel(id, message);
-
 					/** 接受消息 返回给客户端确认 */
-					doWrite(sc, "<accept>"); //  + System.getProperty("line.separator")
+					doWrite(sc, "<0,accept,0>"); //  + System.getProperty("line.separator")
 				} else if (readBytes < 0) {
 					// 对端链路关闭
 					selectionKey.cancel();
@@ -179,22 +156,49 @@ public class NioServer implements Runnable{
 	}
 
 	/**
-	 * 处理接受的数据
-	 * @param message
-	 * @return  1：发送心跳包的确认, 2：连接请求 3 数据包
+	 * 开启 <br>
+	 * 1. 心跳包Thread <br>
+	 * 2. 发送消息（向客户端）Thread
 	 */
-	public static int messageHandel(int id, String message){
-		if(message.trim().equals("<accept>")){
-			System.out.printf("%d 发送成功", id);
+	private static void startThread(){
+		/** 向客户端发送心跳包-线程*/
+		NioServerTick nioServerTick = new NioServerTick();
+		Thread tick = new Thread(nioServerTick);
+		tick.setDaemon(true);
+		tick.start();
+
+		/** 向指定客户端发送信息-线程*/
+		NioServerWrite nioServerWrite = new NioServerWrite();
+		Thread write = new Thread(nioServerWrite);
+		write.setDaemon(true);
+		write.start();
+	}
+
+	/**
+	 * 处理接受的数据
+	 * <[参数个数], [参数类型], [发送端], ···, [参数n],>
+	 * @param message
+	 * @return  1：消息的确认, 2：连接请求 3 水势数据, 4主动关闭连接
+	 */
+	public static int messageHandel(String message){
+
+		String[] m = message.split(",");
+
+		if(m[1].trim().equals("accept")){
 			return 1;
-		}else if(message.trim().equals("<request>")){
-			System.out.printf("客户 %d 连接已经建立\n", id);
+		}else if(m[1].trim().equals("request")){
+
 			return 2;
-		}else if(message.trim().equals("<shutdown>")){
+		}else if(m[1].trim().equals("shutdown")){
 			// Todo 主动关闭连接
 			return 4;
 		}else{
-			System.out.printf("client %d said : %s\n",id, message);
+			/**
+			 * 1. 水势数据
+			 * <[参数个数],[参数类型],[id],[AD],[AD_base],[水势值],[时间],>
+			 *  <6,1,1,1.2,1.5,6.4,2020-06-06 12:12:13,>
+			 */
+			System.out.println(message);
 			return 3;
 		}
 	}

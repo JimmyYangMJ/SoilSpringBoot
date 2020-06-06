@@ -39,7 +39,7 @@ public class WebSocket {
         sendMessage("我收到了");
     }
 
-    public void sendMessage(String message) {
+    public static void sendMessage(String message) {
         for (WebSocket webSocket: webSocketSet) {
             System.out.println("【websocket消息】广播消息, message={}"+ message);
             try {

@@ -9,7 +9,7 @@
         }
 
         if(window.WebSocket){
-            socket = new WebSocket("ws://localhost:8080/webSocket");
+            socket = new WebSocket("ws://localhost:8081/webSocket");
             socket.onmessage = function(event){
                 // 接收到服务器的消息
                 var ta = document.getElementById('responseContent');

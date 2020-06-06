@@ -29,4 +29,14 @@ public class SoilClientsServiceImpl implements ISoilClientsService {
         }
         return ServerResponse.createBySuccess("查询成功", resultCount);
     }
+
+    @Override
+    public boolean updateClientStatus(int id, String status) {
+
+        int resultCount = soilClientsMapper.updateClientStatus(id, status);
+        if(resultCount == 0){
+            return false;
+        }
+        return  true;
+    }
 }

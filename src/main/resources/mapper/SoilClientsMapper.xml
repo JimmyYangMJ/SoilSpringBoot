@@ -10,8 +10,15 @@
     <select id="selectSoilClients" resultType="com.soil.pojo.SoilClients" >
         select client_id, client_status, ip, last_update
         from soil_clients_um
-
     </select>
+
+    <update id="updateClientStatus" parameterType="map" >
+        UPDATE soil_clients_um
+        SET client_status = #{client_status},
+            last_update = NOW()
+        WHERE client_id = #{client_id}
+    </update>
+
 
 
 

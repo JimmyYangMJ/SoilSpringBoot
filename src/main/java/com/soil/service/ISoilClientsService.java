@@ -17,4 +17,11 @@ public interface ISoilClientsService {
      * @return
      */
     ServerResponse<List<SoilClients>> selectSoilClients();
+
+    /**
+     * 更新 上位机状态
+     * online：在线， offline 离线
+     * @return
+     */
+    boolean updateClientStatus(int id, String status);
 }
